@@ -1,3 +1,3 @@
 # lcg
-===
+
 STB style libs
