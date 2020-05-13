@@ -15,7 +15,6 @@ void create(){
 	Mat3 b = Mat3_create();
 
 	Mat4 c = Mat4_create();
-	// Same of this
 	Mat4 d = { 0 };
 
 	c = Mat4_create_identity();
