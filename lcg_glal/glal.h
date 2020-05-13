@@ -15,16 +15,19 @@
 #define GLAL__CONCAT(a, b) a ## b
 #define ns(a) GLAL_CONCAT(GLAL_PREFIX,a)
 #define MATRIX_NAME(rows, colums) GLAL_CONCAT(Mat, GLAL_CONCAT(rows, colums))
-#define GLAL_MATRIX_TYPE(name, rows, colums) struct ns(name){\
+#define GLAL_MATRIX_TYPE(name, rows, colums) typedef struct {\
 	TYPE data[rows][colums];\
-};\
-typedef struct ns(name) name\
+}ns(name)\
+
 
 #define ITER(size, i) i=0;i<size;i++
 #define FOREACH(size, i) for(ITER(size, i))
 #define MGET(mat, i, j) mat.data[i][j]
 
-
+#define GLAL_isType(type, x) (__builtin_types_compatible_p(__typeof__(x), type))
+#define GLAL_isMat2(mat) (GLAL_isType(Mat2, mat))
+#define GLAL_isMat3(mat) (GLAL_isType(Mat3, mat))
+#define GLAL_isMat4(mat) (GLAL_isType(Mat4, mat))
 
 GLAL_MATRIX_TYPE(Mat2,2,2);
 GLAL_MATRIX_TYPE(Mat3,3,3);
@@ -43,6 +46,7 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 #define Mat_print_def(name, rows, colums) void GLAL_CONCAT(name, _print)(name mat)
 #define Mat_print_impl(name, rows, colums) Mat_print_def(name, rows, colums){\
 	int i, j;\
+	printf(""#name "\n");\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
 			TYPE data = MGET(mat, i, j);\
@@ -136,19 +140,30 @@ EXPAND_DEF(Mat_create_def)
 
 EXPAND_DEF(Mat_print_def)
 
+void Matx_print(int type, void* vp);
+
 EXPAND_DEF(Mat_prints_def)
 
 EXPAND_DEF(Mat_create_identity_def)
 
 EXPAND_DEF(Mat_create_copy_def)
 
-#define Mat_print(mat) \
-	if(__builtin_types_compatible_p(__typeof__(mat), struct Mat2)){\
-		Mat2_print(mat);\
-	} else {\
-		printf("aaa");\
-	}\
 
+#define _GENERIC_CALL(type, func, arg) type##func(arg)
+#define GENERIC_CALL(type, func, arg) _GENERIC_CALL(type, func, arg)
+//a = Mat3_create_copy(mat);
+
+#define teste(type, mat) GENERIC_CALL(type,_create_copy, mat)
+
+#define Mat_print(mat) {\
+	if(GLAL_isType(Mat2, mat)){\
+		Matx_print(2, &mat);\
+	} else if(GLAL_isType(Mat3, mat)){\
+		Matx_print(3, &mat);\
+	} else if(GLAL_isType(Mat4, mat)){\
+		Matx_print(4, &mat);\
+	}\
+	}\
 
 #ifdef GLAL_IMPLEMENTATION
 //=================================================================================================================
@@ -156,8 +171,22 @@ EXPAND_DEF(Mat_create_copy_def)
 EXPAND_IMPL(Mat_create_impl)
 
 EXPAND_IMPL(Mat_print_impl)
+void Matx_print(int type, void* vp){
+	switch (type){
+	case 2:
+		Mat2_print(*((Mat2*)vp));
+	  break;
+	case 3:
+		Mat3_print(*((Mat3*)vp));
+	  break;
+	case 4:
+		Mat4_print(*((Mat4*)vp));
+	  break;
+	}
+}
 
 EXPAND_IMPL(Mat_prints_impl)
+
 
 EXPAND_IMPL(Mat_create_identity_impl)
 

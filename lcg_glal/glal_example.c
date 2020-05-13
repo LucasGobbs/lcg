@@ -13,16 +13,16 @@ int main(){
 }
 void create(){
 	Mat2 a = Mat2_create_identity();
-	Mat3 b = Mat3_create();
+	Mat3 b = Mat3_create_identity();
 
 	Mat2 c = Mat2_create_copy(a);
 	Mat4 d = { {0} };
 
 	//c = Mat4_create_identity();
 	//mat_add(&a, Mat2_create_identity());
-	Mat2_print(a);
-	Mat3_print(b);
-	Mat2_prints(c, "c");
-	Mat4_prints(d, "d");
-	Mat_print(b)
+	Mat_print(a);
+
+	Mat_print(b);
+	Mat_print(c);
+	Mat_print(d);
 }
