@@ -1,5 +1,5 @@
 # glal 
-linear algebra for opengl
+single header file, linear algebra library for opengl
 
 # Usage
 drop the glal.h file in your project tree, and define the implementation before the first reference
