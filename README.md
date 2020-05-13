@@ -1,2 +1,3 @@
 # lcg
-Repository of usefull libraries made by me
+===
+STB style libs
