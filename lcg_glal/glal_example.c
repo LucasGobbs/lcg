@@ -3,7 +3,8 @@
 #define GLAL_IMPLEMENTATION
 #include "glal.h"
 
-//gcc -Wall -pedantic -std=c99 -o exe example.c -lm
+// gcc -Wall -pedantic -std=c99 -o exe glal_example.c -lm
+// gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 void create();
 int main(){
 	create();
@@ -14,13 +15,14 @@ void create(){
 	Mat2 a = Mat2_create_identity();
 	Mat3 b = Mat3_create();
 
-	Mat4 c = Mat4_create();
-	Mat4 d = { 0 };
+	Mat2 c = Mat2_create_copy(a);
+	Mat4 d = { {0} };
 
-	c = Mat4_create_identity();
-	mat_add(&a, Mat2_create_identity());
+	//c = Mat4_create_identity();
+	//mat_add(&a, Mat2_create_identity());
 	Mat2_print(a);
 	Mat3_print(b);
-	Mat4_prints(c, "c");
+	Mat2_prints(c, "c");
 	Mat4_prints(d, "d");
+	Mat_print(b)
 }
