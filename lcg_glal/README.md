@@ -1,5 +1,8 @@
 # glal 
-single header file, linear algebra library for opengl
+single header file, linear algebra library for opengl with Mat2, Mat3 and Mat4 types
+
+# Disclaimer 
+This is a very in early version, and make extensive usage of the C preprocesor. so for now is very unpredictable
 
 # Usage
 drop the glal.h file in your project tree, and define the implementation before the first reference
