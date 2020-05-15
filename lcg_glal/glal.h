@@ -12,12 +12,17 @@
 
 #define GLAL_STRINGIFY(a) #a
 #define GLAL_CONCAT(a, b) GLAL__CONCAT(a,b)
+#define GLAL_CONCAT3(a, b, c) GLAL__CONCAT3(a,b,c)
+
 #define GLAL__CONCAT(a, b) a ## b
+#define GLAL__CONCAT3(a,b,c) a ## b ## c
+
 #define ns(a) GLAL_CONCAT(GLAL_PREFIX,a)
-#define MATRIX_NAME(rows, colums) GLAL_CONCAT(Mat, GLAL_CONCAT(rows, colums))
-#define GLAL_MATRIX_TYPE(name, rows, colums) typedef struct {\
+#define GLAL_NS_CONCAT(a, b) GLAL_CONCAT3(GLAL_PREFIX,a,b)
+#define MATRIX_mat_type(rows, colums) GLAL_CONCAT(Mat, GLAL_CONCAT(rows, colums))
+#define GLAL_MATRIX_TYPE(mat_type, rows, colums) typedef struct {\
 	TYPE data[rows][colums];\
-}ns(name)\
+}ns(mat_type)\
 
 
 #define ITER(size, i) i=0;i<size;i++
@@ -25,9 +30,9 @@
 #define MGET(mat, i, j) mat.data[i][j]
 
 #define GLAL_isType(type, x) (__builtin_types_compatible_p(__typeof__(x), type))
-#define GLAL_isMat2(mat) (GLAL_isType(Mat2, mat))
-#define GLAL_isMat3(mat) (GLAL_isType(Mat3, mat))
-#define GLAL_isMat4(mat) (GLAL_isType(Mat4, mat))
+#define GLAL_isMat2(Mat2)(mat) (GLAL_isType(ns(Mat2), mat))
+#define GLAL_isMat3(Mat3)(mat) (GLAL_isType(ns(Mat3), mat))
+#define GLAL_isMat4(Mat4)(mat) (GLAL_isType(ns(Mat4), mat))
 
 GLAL_MATRIX_TYPE(Mat2,2,2);
 GLAL_MATRIX_TYPE(Mat3,3,3);
@@ -37,16 +42,16 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 #define EXPAND_IMPL(impl) impl(Mat2, 2, 2) impl(Mat3, 3, 3) impl(Mat4, 4, 4)
 
 // Create Simple matrix
-#define Mat_create_def(name, rows, colums) name GLAL_CONCAT(name, _create)()
-#define Mat_create_impl(name, rows, colums) Mat_create_def(name, 4, 4){\
-	name a = { { 0 }  }; return a; \
+#define Mat_create_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create)()
+#define Mat_create_impl(mat_type, rows, colums) Mat_create_def(mat_type, rows, colums){\
+	ns(mat_type) a = { { 0 }  }; return a; \
 }\
 
 // Print matrix
-#define Mat_print_def(name, rows, colums) void GLAL_CONCAT(name, _print)(name mat)
-#define Mat_print_impl(name, rows, colums) Mat_print_def(name, rows, colums){\
+#define Mat_print_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _print)(ns(mat_type) mat)
+#define Mat_print_impl(mat_type, rows, colums) Mat_print_def(mat_type, rows, colums){\
 	int i, j;\
-	printf(""#name "\n");\
+	printf(""#mat_type "\n");\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
 			TYPE data = MGET(mat, i, j);\
@@ -61,8 +66,8 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 	printf("\n");\
 }\
 // Print String befor printinf matrix
-#define Mat_prints_def(name, rows, colums) void GLAL_CONCAT(name, _prints)(name mat, char* txt)
-#define Mat_prints_impl(name, rows, colums) Mat_prints_def(name, rows, colums){\
+#define Mat_prints_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _prints)(ns(mat_type) mat, char* txt)
+#define Mat_prints_impl(mat_type, rows, colums) Mat_prints_def(mat_type, rows, colums){\
 	int i, j;\
 	printf("%s\n",txt);\
 	FOREACH(rows, i){\
@@ -79,25 +84,25 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 	printf("\n");\
 }\
 
-#define Mat_create_identity_def(name, rows, colums) name GLAL_CONCAT(name, _create_identity)()
-#define Mat_create_identity_impl(name, rows, colums) Mat_create_identity_def(name, rows, colums){\
+#define Mat_create_identity_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_identity)()
+#define Mat_create_identity_impl(mat_type, rows, colums) Mat_create_identity_def(mat_type, rows, colums){\
 	int i;\
-	name mat = { {0} };\
+	ns(mat_type) mat = { {0} };\
 	FOREACH(rows, i){\
 		MGET(mat, i, i) = 1.0;\
 	}\
 	return mat;\
 }\
 
-#define Mat_create_copy_def(name, rows, colums) name GLAL_CONCAT(name, _create_copy)(name mat)
-#define Mat_create_copy_impl(name, rows, colums) Mat_create_copy_def(name, rows, colums){\
-	name rt = { {0} };\
+#define Mat_create_copy_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_copy)(ns(mat_type) mat)
+#define Mat_create_copy_impl(mat_type, rows, colums) Mat_create_copy_def(mat_type, rows, colums){\
+	ns(mat_type) rt = { {0} };\
 	return rt;\
 }\
 
-#define Mat_create_fill_def(name, rows, colums) name GLAL_CONCAT(name, _create_fill)(TYPE value)
-#define Mat_create_fill_impl(name, rows, colums) Mat_create_fill(name, rows, colums){\
-	name rt = { { 0 } };\
+#define Mat_create_fill_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fill)(TYPE value)
+#define Mat_create_fill_impl(mat_type, rows, colums) Mat_create_fill(mat_type, rows, colums){\
+	mat_type rt = { { 0 } };\
 	int i, j;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
@@ -106,9 +111,20 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 	}\
 	return rt;\
 }\
+
+// Template to function def and impl
+/*
+#define Mat_FUNCTIONNAME_def(mat_type, rows, colums) RETURNTYPE GLAL_NS_CONCAT(mat_type, _FUNCTIONNAME)()
+#define Mat_FUNCTIONNAME_impl(mat_type, rows, colums) Mat_FUNCTIONNAME_def(mat_type, rows, colums){\
+	blablabla\
+}\
+
+
+
+*/
 // TODO Mat_create #
 // TODO Mat_create_identity #
-// TODO Mat_create_copy
+// TODO Mat_create_copy #
 // TODO Mat_create_transpose
 // TODO Mat_create_inverse
 // TODO Mat_create_fill
@@ -125,7 +141,7 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 // TODO Mat_print #
 // TODO Mat_prints #
 /*
-void mat_add(Mat2* mata, Mat2 matb ){
+void mat_add(ns(Mat2)* mata, ns(Mat2) matb ){
 	(*mata).data[0][0] += matb.data[0][0];
 }
 */
@@ -134,13 +150,16 @@ void mat_add(Mat2* mata, Mat2 matb ){
 // TODO Mat_factor
 // TODO Mat_op
 
-//#define Mat_op_def(name, rows, colums) void GLAL_CONCAT(name, _create_identity)(name* self, name other, )
+//#define Mat_op_def(mat_type, rows, colums) void GLAL_CONCAT(mat_type, _create_identity)(mat_type* self, mat_type other, )
 // 
+
+//Mat_create_def(Mat2, 2, 2);
+
 EXPAND_DEF(Mat_create_def)
 
 EXPAND_DEF(Mat_print_def)
 
-void Matx_print(int type, void* vp);
+void ns(Matx_print)(int type, void* vp);
 
 EXPAND_DEF(Mat_prints_def)
 
@@ -149,38 +168,34 @@ EXPAND_DEF(Mat_create_identity_def)
 EXPAND_DEF(Mat_create_copy_def)
 
 
-#define _GENERIC_CALL(type, func, arg) type##func(arg)
-#define GENERIC_CALL(type, func, arg) _GENERIC_CALL(type, func, arg)
-//a = Mat3_create_copy(mat);
-
-#define teste(type, mat) GENERIC_CALL(type,_create_copy, mat)
-
 #define Mat_print(mat) {\
-	if(GLAL_isType(Mat2, mat)){\
-		Matx_print(2, &mat);\
-	} else if(GLAL_isType(Mat3, mat)){\
-		Matx_print(3, &mat);\
-	} else if(GLAL_isType(Mat4, mat)){\
-		Matx_print(4, &mat);\
+	if(GLAL_isType(ns(Mat2), mat)){\
+		ns(Matx_print)(2, &mat);\
+	} else if(GLAL_isType(ns(Mat3), mat)){\
+		ns(Matx_print)(3, &mat);\
+	} else if(GLAL_isType(ns(Mat4), mat)){\
+		ns(Matx_print)(4, &mat);\
 	}\
 	}\
 
 #ifdef GLAL_IMPLEMENTATION
 //=================================================================================================================
 // START IMPLEMENTATIOn
+//Mat_create_impl(Mat2, 2, 2)
+
 EXPAND_IMPL(Mat_create_impl)
 
 EXPAND_IMPL(Mat_print_impl)
-void Matx_print(int type, void* vp){
+void ns(Matx_print)(int type, void* vp){
 	switch (type){
 	case 2:
-		Mat2_print(*((Mat2*)vp));
+		ns(Mat2_print)(*((ns(Mat2)*)vp));
 	  break;
 	case 3:
-		Mat3_print(*((Mat3*)vp));
+		ns(Mat3_print)(*((ns(Mat3)*)vp));
 	  break;
 	case 4:
-		Mat4_print(*((Mat4*)vp));
+		ns(Mat4_print)(*((ns(Mat4)*)vp));
 	  break;
 	}
 }
