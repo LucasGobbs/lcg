@@ -1,5 +1,8 @@
 # glal 
-single header file, linear algebra library for opengl
+single header file, linear algebra library for opengl with Mat2, Mat3 and Mat4 types
+
+# Disclaimer 
+This is a very in early version, and make extensive usage of the C preprocesor. so for now is very unpredictable
 
 # Usage
 drop the glal.h file in your project tree, and define the implementation before the first reference
@@ -46,11 +49,27 @@ glal_Mat3_create();
 Mat2_create();
 Mat3_create();
 ```
-| Name        |  Description | Mat2 | Mat3 | Mat4 |  Arguments | return |
-| ------------- |-------------:| :-------------:| :-------------:| :-------------:|  :-------------:|  :-------------:| 
-| create |  creates a matrix | **yes** | **yes** | **yes** |  **none** |  Matx | 
-| print | prints a matrix | **yes** | **yes** | **yes** |  Matx |  void| 
-| prints| prints a matrix and some text|**yes** | **yes** | **yes** |  Matx, char*|  void| 
+Also some functions have some generic call, like:
+Matx_function((2 or 3 or 4), ...);
+```c
+Mat2 a;
+Mat3 b;
+Matx_print(2,a);
+Matx_print(3,b);
+...
+```
+and some of them have a short call by macro expansion
+```c
+Mat2 a;
+Mat3 b;
+Mat_print(a); // This is a macro
+Mat_print(b); // This is a macro
+```
+| Name        |  Description | Mat2 | Mat3 | Mat4 | Matx/short call macro | Arguments | return | 
+| ---------- |----------:| :----------:| :--------| :-------:|  :-------:|  :-------:|  :-------:|
+| create |  creates a matrix | **yes** | **yes** | **yes** | **no** | **none** |  Mat2 or Mat3 or Mat4 | 
+| print | prints a matrix | **yes** | **yes** | **yes** | **no** | Mat2 or Mat3 or Mat4 |  void| 
+| prints| prints a matrix and some text|**yes** | **yes** | **yes** | **no** |  Mat2 or Mat3 or Mat4, char*|  void| 
 
 
 
