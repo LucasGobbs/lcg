@@ -156,7 +156,31 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 	return rt;\
 }\
 
+#define Mat_create_fromArray_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fromArray)(TYPE* data)
+#define Mat_create_fromArray_impl(mat_type, rows, colums) Mat_create_fromArray_def(mat_type, rows, colums){\
+	ns(mat_type) rt = {0};\
+	int i, j, x = 0;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			MGET(rt, i, j) = data[x];\
+			x++;\
+		}\
+	}\
+	return rt;\
+}\
 
+// TODO check for more cache friendly solutions
+#define Mat_create_transpose_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_transpose)(ns(mat_type) mat)
+#define Mat_create_transpose_impl(mat_type, rows, colums) Mat_create_transpose_def(mat_type, rows, colums){\
+	ns(mat_type) rt = {0};\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			MGET(rt, i, j) = MGET(mat, j, i);\
+		}\
+	}\
+	return rt;\
+}\
 // Template to function def and impl
 /*
 #define Mat_FUNCTIONNAME_def(mat_type, rows, colums) RETURNTYPE GLAL_NS_CONCAT(mat_type, _FUNCTIONNAME)()
@@ -170,12 +194,16 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 // TODO Mat_create #
 // TODO Mat_create_identity #
 // TODO Mat_create_copy #
-// TODO Mat_create_transpose
+// TODO Mat_create_transpose #
 // TODO Mat_create_inverse
 // TODO Mat_create_fill #
-// TODO Mat_create_fill_op
-// TODO Mat_create_fromArray
+// TODO Mat_create_fill_op #
+// TODO Mat_create_fromArray #
 
+// TODO Mat_naive_compare
+// TODO Mat_compare
+// TODO Mat_determinant
+ 
 // TODO Mat_create_op
 // TODO Mat_create_add
 // TODO Mat_create_sub
@@ -204,8 +232,6 @@ EXPAND_DEF(Mat_create_def)
 
 EXPAND_DEF(Mat_print_def)
 
-
-
 void ns(Matx_print)(int type, void* vp);
 
 EXPAND_DEF(Mat_prints_def)
@@ -214,11 +240,13 @@ EXPAND_DEF(Mat_create_identity_def)
 
 EXPAND_DEF(Mat_create_copy_def)
 
-
 EXPAND_DEF(Mat_create_fill_def)
 
 EXPAND_DEF(Mat_create_fill_op_def)
 
+EXPAND_DEF(Mat_create_fromArray_def)
+
+EXPAND_DEF(Mat_create_transpose_def)
 #define Mat_print(mat) {\
 	if(GLAL_isType(ns(Mat2), mat)){\
 		ns(Matx_print)(2, &mat);\
@@ -253,7 +281,6 @@ void ns(Matx_print)(int type, void* vp){
 
 EXPAND_IMPL(Mat_prints_impl)
 
-
 EXPAND_IMPL(Mat_create_identity_impl)
 
 EXPAND_IMPL(Mat_create_copy_impl)
@@ -261,6 +288,10 @@ EXPAND_IMPL(Mat_create_copy_impl)
 EXPAND_IMPL(Mat_create_fill_impl)
 
 EXPAND_IMPL(Mat_create_fill_op_impl)
+
+EXPAND_IMPL(Mat_create_fromArray_impl)
+
+EXPAND_IMPL(Mat_create_transpose_impl)
 
 #endif //GLAL_IMPLEMENTATION
 
