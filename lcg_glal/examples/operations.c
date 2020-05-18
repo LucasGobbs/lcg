@@ -5,9 +5,16 @@
 // gcc -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 // gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 float a_div_b(float a, float b){
+    if(a==0){return 0;}
     return (a/b);
 }
+void operations_a();
+void operations_b();
 int main(){
+    operations_b();
+    return 0;
+}
+void operations_a(){
     Mat3 a = Mat3_create_fill(2.0);
     Mat3 b = Mat3_create_scalar(a, 3.0);
     Mat3_prints(a, "a:");
@@ -23,10 +30,19 @@ int main(){
 
     Mat3 f = Mat3_create_schur(a, e);
     Mat3_prints(f, "f: (a * e), schur multiplication");
-    return 0;
+}
+void operations_b(){
+    Mat3 a = Mat3_create_identity();
+    Mat3 b = Mat3_create_fill(3.0);
+    Mat3 c = Mat3_create();
+    Mat3_print(a);
+    Mat3_print(b);
+    Mat3_op(&a, b, &a_div_b);
+    Mat3_print(a);
+    Mat3_print(b);
 }
 /* outputs
-	
+ operations_a and operations_b prints the same
 a:
 2.000   2.000   2.000
 2.000   2.000   2.000

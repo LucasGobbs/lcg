@@ -9,7 +9,7 @@ gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 */
 
 
-#ifndef GLAL_PREFIX 
+#ifndef GLAL_PREFIX
 	#define GLAL_PREFIX glal_
 #endif // GLAL_PREFIX
 
@@ -31,7 +31,7 @@ gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 #define GLAL_NS_CONCAT(a, b) GLAL_CONCAT3(GLAL_PREFIX,a,b)
 
 #define GLAL_ABS(a) ((a)>0.0?(a):-(a))
-#define GLAL_PI 3.1415926535 
+#define GLAL_PI 3.1415926535
 #define GLAL_EPSILON 0.00000001 // i think its smol but you can prove me wrong
 // =============================================================================
 // Type
@@ -59,7 +59,7 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 
 #
 // =============================================================================
-// Functions 
+// Functions
 
 /* Template to function def and impl
 #define Mat_FUNCTIONNAME_def(mat_type, rows, colums) RETURNTYPE GLAL_NS_CONCAT(mat_type, _FUNCTIONNAME)()
@@ -186,7 +186,7 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 	return rt;\
 }\
 
-// 
+//
 #define Mat_naive_equals_def(mat_type, rows, colums) int GLAL_NS_CONCAT(mat_type, _naive_equals)(ns(mat_type) a, ns(mat_type) b)
 #define Mat_naive_equals_impl(mat_type, rows, colums) Mat_naive_equals_def(mat_type, rows, colums){\
 	int i, j;\
@@ -278,6 +278,53 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 	return rt;\
 }\
 
+#define Mat_create_naive_mult_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_naive_mult)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_create_naive_mult_impl(mat_type, rows, colums) Mat_create_naive_mult_def(mat_type, rows, colums){\
+	ns(mat_type) rt = {0};\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			MGET(rt, i, j) = MGET(a, i, j) *  MGET(b, i, j);\
+		}\
+	}\
+	return rt;\
+}\
+
+#define Mat_create_strassen_mult_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_strassen_mult)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_create_strassen_mult_impl(mat_type, rows, colums) Mat_create_strassen_mult_def(mat_type, rows, colums){\
+	ns(mat_type) rt = {0};\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			MGET(rt, i, j) = MGET(a, i, j) *  MGET(b, i, j);\
+		}\
+	}\
+	return rt;\
+}\
+
+#define Mat_create_mult_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_mult)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_create_mult_impl(mat_type, rows, colums) Mat_create_mult_def(mat_type, rows, colums){\
+	ns(mat_type) rt = {0};\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			MGET(rt, i, j) = MGET(a, i, j) *  MGET(b, i, j);\
+		}\
+	}\
+	return rt;\
+}\
+
+#define Mat_op_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _op)(ns(mat_type) *a, ns(mat_type) b, TYPE (*operation)(TYPE a, TYPE b))
+#define Mat_op_impl(mat_type, rows, colums) Mat_op_def(mat_type, rows, colums){\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			TYPE a_value = MGET((*a), i, j);\
+			TYPE b_value = MGET(b, i, j);\
+			MGET((*a), i, j) = operation(a_value, b_value);\
+		}\
+	}\
+}\
 // Template to function def and impl
 /*
 #define Mat_FUNCTIONNAME_def(mat_type, rows, colums) RETURNTYPE GLAL_NS_CONCAT(mat_type, _FUNCTIONNAME)()
@@ -323,7 +370,7 @@ void mat_add(ns(Mat2)* mata, ns(Mat2) matb ){
 // TODO Mat_op
 
 //#define Mat_op_def(mat_type, rows, colums) void GLAL_CONCAT(mat_type, _create_identity)(mat_type* self, mat_type other, )
-// 
+//
 
 //Mat_create_def(Mat2, 2, 2);
 
@@ -348,6 +395,8 @@ EXPAND_DEF(Mat_create_fromArray_def)
 EXPAND_DEF(Mat_create_transpose_def)
 
 EXPAND_DEF(Mat_create_op_def)
+
+EXPAND_DEF(Mat_op_def)
 
 EXPAND_DEF(Mat_create_add_def)
 
@@ -408,6 +457,7 @@ EXPAND_IMPL(Mat_create_fromArray_impl)
 EXPAND_IMPL(Mat_create_transpose_impl)
 
 EXPAND_IMPL(Mat_create_op_impl)
+EXPAND_IMPL(Mat_op_impl)
 
 EXPAND_IMPL(Mat_create_add_impl)
 
