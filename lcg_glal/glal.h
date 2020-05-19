@@ -325,6 +325,55 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 		}\
 	}\
 }\
+
+#define Mat_add_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _add)(ns(mat_type) *a, ns(mat_type) b)
+#define Mat_add_impl(mat_type, rows, colums) Mat_add_def(mat_type, rows, colums){\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			TYPE a_value = MGET((*a), i, j);\
+			TYPE b_value = MGET(b, i, j);\
+			MGET((*a), i, j) = a_value + b_value;\
+		}\
+	}\
+}\
+
+#define Mat_sub_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _sub)(ns(mat_type) *a, ns(mat_type) b)
+#define Mat_sub_impl(mat_type, rows, colums) Mat_sub_def(mat_type, rows, colums){\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			TYPE a_value = MGET((*a), i, j);\
+			TYPE b_value = MGET(b, i, j);\
+			MGET((*a), i, j) = a_value - b_value;\
+		}\
+	}\
+}\
+
+#define Mat_scalar_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _scalar)(ns(mat_type) *a, TYPE  value)
+#define Mat_scalar_impl(mat_type, rows, colums) Mat_scalar_def(mat_type, rows, colums){\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			TYPE a_value = MGET((*a), i, j);\
+			MGET((*a), i, j) = a_value * value;\
+		}\
+	}\
+}\
+
+#define Mat_schur_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _schur)(ns(mat_type) *a, ns(mat_type) b)
+#define Mat_schur_impl(mat_type, rows, colums) Mat_schur_def(mat_type, rows, colums){\
+	int i, j;\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			TYPE a_value = MGET((*a), i, j);\
+			TYPE b_value = MGET(b, i, j);\
+			MGET((*a), i, j) = a_value * b_value;\
+		}\
+	}\
+}\
+
+
 // Template to function def and impl
 /*
 #define Mat_FUNCTIONNAME_def(mat_type, rows, colums) RETURNTYPE GLAL_NS_CONCAT(mat_type, _FUNCTIONNAME)()
