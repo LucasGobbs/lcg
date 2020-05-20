@@ -81,6 +81,7 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 
 #define GLAL_EXPAND_DEF_ALL(def) GLAL_EXPAND_DEF_MAT(def) GLAL_EXPAND_DEF_VEC(def)
 #define GLAL_EXPAND_IMPL_ALL(def) GLAL_EXPAND_IMPL_MAT(def) GLAL_EXPAND_IMPL_VEC(def)
+
 // Create Simple matrix
 #define Mat_create_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create)()
 #define Mat_create_impl(mat_type, rows, colums) Mat_create_def(mat_type, rows, colums){\
@@ -320,7 +321,6 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	}\
 	return rt;\
 }\
-
 
 // TODO create strassen multiplication
 #define Mat_strassen_mult_Mat_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _strassen_mult_mat)(ns(mat_type) a, ns(mat_type) b)
