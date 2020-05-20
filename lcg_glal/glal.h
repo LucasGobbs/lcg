@@ -7,7 +7,8 @@ Usage
 gcc -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 */
-
+#include <stdio.h>
+#include <stdarg.h>
 
 #ifndef GLAL_PREFIX
 	#define GLAL_PREFIX glal_
@@ -29,6 +30,7 @@ gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 #define GLAL__STRINGIFY(a) #a
 #define ns(a) GLAL_CONCAT(GLAL_PREFIX,a)
 #define GLAL_NS_CONCAT(a, b) GLAL_CONCAT3(GLAL_PREFIX,a,b)
+#define GLAL_NS_CONCAT3(a, b, c) GLAL_CONCAT4(GLAL_PREFIX,a,b,c)
 
 #define GLAL_ABS(a) ((a)>0.0?(a):-(a))
 #define GLAL_PI 3.1415926535
@@ -41,9 +43,13 @@ gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 	TYPE data[rows][colums];\
 }ns(mat_type)\
 
-GLAL_MATRIX_TYPE(Mat2,2,2);
-GLAL_MATRIX_TYPE(Mat3,3,3);
-GLAL_MATRIX_TYPE(Mat4,4,4);
+GLAL_MATRIX_TYPE(Mat2,2,2); 
+GLAL_MATRIX_TYPE(Mat3,3,3); 
+GLAL_MATRIX_TYPE(Mat4,4,4); 
+
+GLAL_MATRIX_TYPE(Vec2,2,1); 
+GLAL_MATRIX_TYPE(Vec3,3,1); 
+GLAL_MATRIX_TYPE(Vec4,4,1); 
 
 
 // =============================================================================
@@ -57,7 +63,7 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 #define GLAL_isMat3(Mat3)(mat) (GLAL_isType(ns(Mat3), mat))
 #define GLAL_isMat4(Mat4)(mat) (GLAL_isType(ns(Mat4), mat))
 
-#
+
 // =============================================================================
 // Functions
 
@@ -67,9 +73,14 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 	blablabla\
 }\
 */
-#define EXPAND_DEF(def) def(Mat2, 2, 2); def(Mat3, 3, 3); def(Mat4, 4, 4);
-#define EXPAND_IMPL(impl) impl(Mat2, 2, 2) impl(Mat3, 3, 3) impl(Mat4, 4, 4)
+#define GLAL_EXPAND_DEF_MAT(def) def(Mat2, 2, 2); def(Mat3, 3, 3); def(Mat4, 4, 4);
+#define GLAL_EXPAND_IMPL_MAT(impl) impl(Mat2, 2, 2) impl(Mat3, 3, 3) impl(Mat4, 4, 4)
 
+#define GLAL_EXPAND_DEF_VEC(def) def(Vec2, 2, 1); def(Vec3, 3, 1); def(Vec4, 4, 1);
+#define GLAL_EXPAND_IMPL_VEC(impl) impl(Vec2, 2, 1) impl(Vec3, 3, 1) impl(Vec4, 4, 1)
+
+#define GLAL_EXPAND_DEF_ALL(def) GLAL_EXPAND_DEF_MAT(def) GLAL_EXPAND_DEF_VEC(def)
+#define GLAL_EXPAND_IMPL_ALL(def) GLAL_EXPAND_IMPL_MAT(def) GLAL_EXPAND_IMPL_VEC(def)
 // Create Simple matrix
 #define Mat_create_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create)()
 #define Mat_create_impl(mat_type, rows, colums) Mat_create_def(mat_type, rows, colums){\
@@ -168,6 +179,24 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 		FOREACH(colums, j){\
 			MGET(rt, i, j) = data[x];\
 			x++;\
+		}\
+	}\
+	return rt;\
+}\
+
+#define Mat_create_fromArg_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fromArg)(TYPE first, ...)
+#define Mat_create_fromArg_impl(mat_type, rows, colums) Mat_create_fromArg_def(mat_type, rows, colums){\
+	ns(mat_type) rt = {0};\
+	int i, j;\
+	va_list list;\
+	va_start(list, first);\
+	FOREACH(rows, i){\
+		FOREACH(colums, j){\
+			if(i==0 && j==0){\
+				MGET(rt, i, j) = first;\
+ 			} else {\
+				MGET(rt, i, j) = va_arg(list, double);\
+			}\
 		}\
 	}\
 	return rt;\
@@ -278,40 +307,31 @@ GLAL_MATRIX_TYPE(Mat4,4,4);
 	return rt;\
 }\
 
-#define Mat_create_naive_mult_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_naive_mult)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_create_naive_mult_impl(mat_type, rows, colums) Mat_create_naive_mult_def(mat_type, rows, colums){\
+#define Mat_naive_mult_Mat_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _naive_mult_mat)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_naive_mult_Mat_impl(mat_type, rows, colums) Mat_naive_mult_Mat_def(mat_type, rows, colums){\
 	ns(mat_type) rt = {0};\
-	int i, j;\
+	int i, j, k;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
-			MGET(rt, i, j) = MGET(a, i, j) *  MGET(b, i, j);\
+			FOREACH(colums, k){\
+				MGET(rt, i, j) += MGET(a, i, k) *  MGET(b, k, j);\
+			}\
 		}\
 	}\
 	return rt;\
 }\
 
-#define Mat_create_strassen_mult_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_strassen_mult)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_create_strassen_mult_impl(mat_type, rows, colums) Mat_create_strassen_mult_def(mat_type, rows, colums){\
+
+// TODO create strassen multiplication
+#define Mat_strassen_mult_Mat_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _strassen_mult_mat)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_strassen_mult_Mat_impl(mat_type, rows, colums) Mat_strassen_mult_Mat_def(mat_type, rows, colums){\
 	ns(mat_type) rt = {0};\
-	int i, j;\
-	FOREACH(rows, i){\
-		FOREACH(colums, j){\
-			MGET(rt, i, j) = MGET(a, i, j) *  MGET(b, i, j);\
-		}\
-	}\
 	return rt;\
 }\
 
-#define Mat_create_mult_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_mult)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_create_mult_impl(mat_type, rows, colums) Mat_create_mult_def(mat_type, rows, colums){\
-	ns(mat_type) rt = {0};\
-	int i, j;\
-	FOREACH(rows, i){\
-		FOREACH(colums, j){\
-			MGET(rt, i, j) = MGET(a, i, j) *  MGET(b, i, j);\
-		}\
-	}\
-	return rt;\
+#define Mat_mult_Mat_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _mult_mat)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_mult_Mat_impl(mat_type, rows, colums) Mat_mult_Mat_def(mat_type, rows, colums){\
+	return GLAL_NS_CONCAT(mat_type, _naive_mult_mat)(a,b);\
 }\
 
 #define Mat_op_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _op)(ns(mat_type) *a, ns(mat_type) b, TYPE (*operation)(TYPE a, TYPE b))
@@ -423,41 +443,32 @@ void mat_add(ns(Mat2)* mata, ns(Mat2) matb ){
 
 //Mat_create_def(Mat2, 2, 2);
 
-EXPAND_DEF(Mat_create_def)
-
-EXPAND_DEF(Mat_print_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_def)
+GLAL_EXPAND_DEF_ALL(Mat_print_def)
+GLAL_EXPAND_DEF_ALL(Mat_prints_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_identity_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_copy_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_fill_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_fill_op_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_fromArray_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_fromArg_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_transpose_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_op_def)
+GLAL_EXPAND_DEF_ALL(Mat_op_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_add_def)
+GLAL_EXPAND_DEF_ALL(Mat_add_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_sub_def)
+GLAL_EXPAND_DEF_ALL(Mat_sub_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_scalar_def)
+GLAL_EXPAND_DEF_ALL(Mat_scalar_def)
+GLAL_EXPAND_DEF_ALL(Mat_create_schur_def)
+GLAL_EXPAND_DEF_ALL(Mat_schur_def)
+GLAL_EXPAND_DEF_ALL(Mat_naive_equals_def)
+GLAL_EXPAND_DEF_ALL(Mat_equals_def)
+GLAL_EXPAND_DEF_MAT(Mat_mult_Mat_def)
+GLAL_EXPAND_DEF_MAT(Mat_naive_mult_Mat_def)
 
 void ns(Matx_print)(int type, void* vp);
-
-EXPAND_DEF(Mat_prints_def)
-
-EXPAND_DEF(Mat_create_identity_def)
-
-EXPAND_DEF(Mat_create_copy_def)
-
-EXPAND_DEF(Mat_create_fill_def)
-
-EXPAND_DEF(Mat_create_fill_op_def)
-
-EXPAND_DEF(Mat_create_fromArray_def)
-
-EXPAND_DEF(Mat_create_transpose_def)
-
-EXPAND_DEF(Mat_create_op_def)
-
-EXPAND_DEF(Mat_op_def)
-
-EXPAND_DEF(Mat_create_add_def)
-
-EXPAND_DEF(Mat_create_sub_def)
-
-EXPAND_DEF(Mat_create_scalar_def)
-
-EXPAND_DEF(Mat_create_schur_def)
-
-EXPAND_DEF(Mat_naive_equals_def)
-
-EXPAND_DEF(Mat_equals_def)
 
 #define Mat_print(mat) {\
 	if(GLAL_isType(ns(Mat2), mat)){\
@@ -469,14 +480,37 @@ EXPAND_DEF(Mat_equals_def)
 	}\
 	}\
 
+
 #ifdef GLAL_IMPLEMENTATION
 //=================================================================================================================
 // START IMPLEMENTATIOn
 
+GLAL_EXPAND_IMPL_ALL(Mat_print_impl)
 
-EXPAND_IMPL(Mat_create_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_prints_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_identity_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_copy_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_fill_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_fill_op_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_fromArray_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_fromArg_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_transpose_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_op_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_op_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_add_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_add_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_sub_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_sub_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_scalar_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_scalar_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_create_schur_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_schur_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_naive_equals_impl)
+GLAL_EXPAND_IMPL_ALL(Mat_equals_impl)
+GLAL_EXPAND_IMPL_MAT(Mat_mult_Mat_impl)
+GLAL_EXPAND_IMPL_MAT(Mat_naive_mult_Mat_impl)
 
-EXPAND_IMPL(Mat_print_impl)
 void ns(Matx_print)(int type, void* vp){
 	switch (type){
 	case 2:
@@ -491,34 +525,6 @@ void ns(Matx_print)(int type, void* vp){
 	}
 }
 
-EXPAND_IMPL(Mat_prints_impl)
-
-EXPAND_IMPL(Mat_create_identity_impl)
-
-EXPAND_IMPL(Mat_create_copy_impl)
-
-EXPAND_IMPL(Mat_create_fill_impl)
-
-EXPAND_IMPL(Mat_create_fill_op_impl)
-
-EXPAND_IMPL(Mat_create_fromArray_impl)
-
-EXPAND_IMPL(Mat_create_transpose_impl)
-
-EXPAND_IMPL(Mat_create_op_impl)
-EXPAND_IMPL(Mat_op_impl)
-
-EXPAND_IMPL(Mat_create_add_impl)
-
-EXPAND_IMPL(Mat_create_sub_impl)
-
-EXPAND_IMPL(Mat_create_scalar_impl)
-
-EXPAND_IMPL(Mat_create_schur_impl)
-
-EXPAND_IMPL(Mat_naive_equals_impl)
-
-EXPAND_IMPL(Mat_equals_impl)
 #endif //GLAL_IMPLEMENTATION
 
 #endif //GLAL_H

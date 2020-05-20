@@ -44,18 +44,27 @@ void operations_b(){
     Mat3_scalar(&b, 3.0);
     Mat3_prints(b, "b: (a * 3)");
 
-
     Mat3_add(&c, b);
     Mat3_prints(c, "c: (a + b)");
 
-    Mat3_add(&d, b);
+    Mat3_sub(&d, b);
     Mat3_prints(d, "d: (a - b)");
 
     Mat3_op(&e, b, &a_div_b);
     Mat3_prints(e, "e: (a / b)");
 
-    Mat3_add(&f, e);
+    Mat3_schur(&f, e);
     Mat3_prints(f, "f: (a * e), schur multiplication");
+    
+    /*
+    Vec3 va = Vec3_create_fill(1.0);
+    Vec3 vb = Vec3_create_fromArg(0.0, 1.0, 2.0);
+    Vec3 vc = Vec3_create_add(va, vb);
+    Vec3_prints(va, "Vec a: ");
+    Vec3_prints(vb, "Vec b: ");
+    Vec3_prints(vc, "Vec c: ");
+    */
+    
 }
 /* outputs
  operations_a and operations_b prints the same
