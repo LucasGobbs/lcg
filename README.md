@@ -4,4 +4,5 @@ STB style libs
 
 | Library | language | description 
 | ------ | ------ | ------ | 
-| **[glal](lcg_glal/README.md)** | c99 |Simple linear algebra operations for opengl |
+| **[lcg_glal](lcg_glal/README.md)** | c99 |Simple linear algebra operations for opengl |
+| **[lcg_shader](lcg_shaders/README.md)** | c99 |Simple shader compilation utilities for opengl |
