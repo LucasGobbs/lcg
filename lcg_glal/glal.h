@@ -63,6 +63,7 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 #define GLAL_isMat3(Mat3)(mat) (GLAL_isType(ns(Mat3), mat))
 #define GLAL_isMat4(Mat4)(mat) (GLAL_isType(ns(Mat4), mat))
 
+#define GLAL_ANGLE(angle) (angle)
 
 // =============================================================================
 // Functions
@@ -480,6 +481,9 @@ void ns(Matx_print)(int type, void* vp);
 	}\
 	}\
 
+ns(Mat4) ns(Mat4_create_rotationX)(float angle){
+
+}
 
 #ifdef GLAL_IMPLEMENTATION
 //=================================================================================================================
