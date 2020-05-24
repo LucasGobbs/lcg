@@ -3,12 +3,13 @@
 
 /*
 Usage
-
+#define GLAL_IMPLEMENTATION
 gcc -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 */
 #include <stdio.h>
 #include <stdarg.h>
+#include <math.h>
 
 #ifndef GLAL_PREFIX
 	#define GLAL_PREFIX glal_
@@ -56,14 +57,19 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 // Utility function helpers
 #define ITER(size, i) i=0;i<size;i++
 #define FOREACH(size, i) for(ITER(size, i))
+
 #define MGET(mat, i, j) mat.data[i][j]
+#define VX(mat) mat.data[0][0]
+#define VY(mat) mat.data[1][0]
+#define VZ(mat) mat.data[2][0]
+#define VW(mat) mat.data[3][0]
 
 #define GLAL_isType(type, x) (__builtin_types_compatible_p(__typeof__(x), type))
 #define GLAL_isMat2(Mat2)(mat) (GLAL_isType(ns(Mat2), mat))
 #define GLAL_isMat3(Mat3)(mat) (GLAL_isType(ns(Mat3), mat))
 #define GLAL_isMat4(Mat4)(mat) (GLAL_isType(ns(Mat4), mat))
 
-#define GLAL_ANGLE(angle) (angle)
+#define GLAL_ANGLE(angle) (angle * GLAL_PI / 180)
 
 // =============================================================================
 // Functions
@@ -115,11 +121,7 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
 			TYPE data = MGET(mat, i, j);\
-			if(data==0.0){\
-				printf("0\t");\
-			} else {\
-				printf("%.3f\t", data);\
-			}\
+			printf("%.3f\t", data);\
 		}\
 		printf("\n");\
 	}\
@@ -197,7 +199,7 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 			if(i==0 && j==0){\
 				MGET(rt, i, j) = first;\
  			} else {\
-				MGET(rt, i, j) = va_arg(list, double);\
+				MGET(rt, i, j) = (TYPE) va_arg(list, double);\
 			}\
 		}\
 	}\
@@ -395,6 +397,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 }\
 
 
+
+
 // Template to function def and impl
 /*
 #define Mat_FUNCTIONNAME_def(mat_type, rows, colums) RETURNTYPE GLAL_NS_CONCAT(mat_type, _FUNCTIONNAME)()
@@ -481,9 +485,28 @@ void ns(Matx_print)(int type, void* vp);
 	}\
 	}\
 
-ns(Mat4) ns(Mat4_create_rotationX)(float angle){
+ns(Mat4) ns(Mat4_create_rotationX)(float angle);
+ns(Mat4) ns(Mat4_create_rotationY)(float angle);
+ns(Mat4) ns(Mat4_create_rotationZ)(float angle);
+ns(Mat4) ns(Mat4_create_translation)(TYPE x, TYPE y, TYPE z);
+ns(Mat4) ns(Mat4_create_scale)(TYPE x, TYPE y, TYPE z);
+ns(Mat4) ns(Mat4_create_perspective)(TYPE fov, TYPE ratio, TYPE near, TYPE far);
+ns(Mat4) ns(Mat4_create_lookAt)(ns(Vec3) eye, ns(Vec3) center, ns(Vec3) up);
+ns(Vec3) ns(Vec3_cross)(ns(Vec3) a, ns(Vec3) b);
 
+// TODO make generic 
+void ns(Vec3_normalize)(ns(Vec3) *a);
+TYPE ns(Vec3_dot)(ns(Vec3) a, ns(Vec3) b);
+/*
+ns(Mat4) ns(Mat4_create_lookAt)(float angle){
+
+	return ns(Mat4_create_fromArray)(data);
 }
+ns(Mat4) ns(Mat4_create_ortho)(float angle){
+
+	return ns(Mat4_create_fromArray)(data);
+}
+*/
 
 #ifdef GLAL_IMPLEMENTATION
 //=================================================================================================================
@@ -528,7 +551,163 @@ void ns(Matx_print)(int type, void* vp){
 	  break;
 	}
 }
+ns(Mat4) ns(Mat4_create_rotationX)(float angle){
+    TYPE _cos = cosf(GLAL_ANGLE(angle));
+    TYPE _sin = sinf(GLAL_ANGLE(angle));
 
+    TYPE data[] = {
+        1.0,  0.0,   0.0, 0.0,
+        0.0, _cos, -_sin, 0.0,
+        0.0, _sin,  _cos, 0.0,
+        0.0,  0.0,   0.0, 1.0
+    };
+	return ns(Mat4_create_fromArray)(data);
+}
+ns(Mat4) ns(Mat4_create_rotationY)(float angle){
+	TYPE _cos = cosf(GLAL_ANGLE(angle));
+    TYPE _sin = sinf(GLAL_ANGLE(angle));
+    
+    TYPE data[] = {
+         _cos, 0.0, _sin, 0.0,
+          0.0, 1.0,  0.0, 0.0,
+        -_sin, 0.0, _cos, 0.0,
+          0.0, 0.0,  0.0, 1.0
+    };
+	return ns(Mat4_create_fromArray)(data);
+}
+ns(Mat4) ns(Mat4_create_rotationZ)(float angle){
+	TYPE _cos = cosf(GLAL_ANGLE(angle));
+    TYPE _sin = sinf(GLAL_ANGLE(angle));
+
+    TYPE data[] = {
+        _cos, -_sin, 0.0, 0.0,
+        _sin,  _cos, 0.0, 0.0,
+         0.0,   0.0, 1.0, 0.0,
+         0.0,   0.0, 0.0, 1.0
+    };
+	return ns(Mat4_create_fromArray)(data);
+}
+ns(Mat4) ns(Mat4_create_translation)(TYPE x, TYPE y, TYPE z){
+	TYPE data[] = {
+        1.0, 0.0, 0.0,   x,
+        0.0, 1.0, 0.0,   y,
+        0.0, 0.0, 1.0,   z,
+        0.0, 0.0, 0.0, 1.0
+    };
+	return ns(Mat4_create_fromArray)(data);
+}
+ns(Mat4) ns(Mat4_create_scale)(TYPE x, TYPE y, TYPE z){
+	TYPE data[] = {
+          x, 0.0, 0.0, 0.0,
+        0.0,   y, 0.0, 0.0,
+        0.0, 0.0,   z, 0.0,
+        0.0, 0.0, 0.0, 1.0
+    };
+	return ns(Mat4_create_fromArray)(data);
+}
+ns(Mat4) ns(Mat4_create_perspective)(TYPE fov, TYPE ratio, TYPE near, TYPE far){
+	TYPE t = near * tan(GLAL_ANGLE((fov / 2.0)));
+    TYPE r = t * ratio;
+    TYPE data[] = {
+        near/r, 0.0,    0.0,                      0.0,
+        0.0,    near/t, 0.0,                      0.0,
+        0.0,    0.0,    -(far+near)/(far-near),    -1, 
+        0.0,    0.0,    (-2*far*near)/(far-near), 0.0,
+    };
+	return ns(Mat4_create_fromArray)(data);
+
+    /*
+    TYPE a = 1.0f / tan(GLAL_ANGLE((fov / 2.0)));
+    TYPE data[] = {
+        a/ratio, 0.0,    0.0,                      0.0,
+        0.0,     a,      0.0,                      0.0,
+        0.0,     0.0,    -(far+near)/(far-near),    -1, 
+        0.0,     0.0,    (-2*far*near)/(far-near), 0.0,
+    };
+	return ns(Mat4_create_fromArray)(data);
+*/
+	
+}
+ns(Vec3) ns(Vec3_create_cross)(ns(Vec3) a, ns(Vec3) b){
+    ns(Vec3) rt;
+    VX(rt) = VY(a) * VZ(b) - VZ(a) * VY(b); 
+    VY(rt) = VZ(a) * VX(b) - VX(a) * VZ(b); 
+    VZ(rt) = VX(a) * VY(b) - VY(a) * VX(b); 
+    //Vec3_prints(rt, "cross");
+    return rt;
+}
+
+ns(Mat4) ns(Mat4_create_lookAt)(ns(Vec3) eye, ns(Vec3) center, ns(Vec3) up){
+    ns(Vec3) front = ns(Vec3_create_sub)(center, eye);
+    ns(Vec3_normalize)(&front);
+    
+    ns(Vec3) right = ns(Vec3_create_cross)(front, up);
+    ns(Vec3_normalize)(&right);
+
+    ns(Vec3) new_up = ns(Vec3_create_cross)(right, front);
+
+    TYPE dot_right_eye = ns(Vec3_dot)(eye,right);
+    TYPE dot_up_eye = ns(Vec3_dot)(eye,new_up );
+    TYPE dot_front_eye = ns(Vec3_dot)(eye,front);
+    TYPE data[] = {
+              VX(right),       VX(new_up),      -VX(front), 0.0,
+              VY(right),       VY(new_up),      -VY(front), 0.0,
+              VZ(right),       VZ(new_up),      -VZ(front), 0.0,
+        - dot_right_eye, - dot_up_eye,  dot_front_eye, 1.0,
+    };
+    return ns(Mat4_create_fromArray)(data);
+    /*
+    vec3 f;
+	vec3_sub(f, center, eye);	
+	vec3_norm(f, f);	
+	
+	vec3 s;
+	vec3_mul_cross(s, f, up);
+	vec3_norm(s, s);
+
+	vec3 t;
+	vec3_mul_cross(t, s, f);
+
+	m[0][0] =  s[0];
+	m[0][1] =  t[0];
+	m[0][2] = -f[0];
+	m[0][3] =   0.f;
+
+	m[1][0] =  s[1];
+	m[1][1] =  t[1];
+	m[1][2] = -f[1];
+	m[1][3] =   0.f;
+
+	m[2][0] =  s[2];
+	m[2][1] =  t[2];
+	m[2][2] = -f[2];
+	m[2][3] =   0.f;
+
+	m[3][0] =  0.f;
+	m[3][1] =  0.f;
+	m[3][2] =  0.f;
+	m[3][3] =  1.f;
+
+	mat4x4_translate_in_place(m, -eye[0], -eye[1], -eye[2]);
+    */
+
+}
+void ns(Vec3_normalize)(ns(Vec3) *a){
+    TYPE length = sqrtf((VX((*a)) * VX((*a))) + 
+                        (VY((*a)) * VY((*a))) +
+                        (VZ((*a)) * VZ((*a))));
+    if(length - GLAL_EPSILON<=0.0){
+        return;
+    }
+    VX((*a)) /= length;
+    VY((*a)) /= length;
+    VZ((*a)) /= length;
+}
+TYPE ns(Vec3_dot)(ns(Vec3) a, ns(Vec3) b){
+    return ((VX(a)*VX(b))+
+            (VY(a)*VY(b))+
+            (VZ(a)*VZ(b)));
+}
 #endif //GLAL_IMPLEMENTATION
 
 #endif //GLAL_H
