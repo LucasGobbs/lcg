@@ -488,6 +488,7 @@ void ns(Matx_print)(int type, void* vp);
 ns(Mat4) ns(Mat4_create_rotationX)(float angle);
 ns(Mat4) ns(Mat4_create_rotationY)(float angle);
 ns(Mat4) ns(Mat4_create_rotationZ)(float angle);
+ns(Mat4) ns(Mat4_create_rotationXYZ)(float x_angle, float y_angle, float z_angle);
 ns(Mat4) ns(Mat4_create_translation)(TYPE x, TYPE y, TYPE z);
 ns(Mat4) ns(Mat4_create_scale)(TYPE x, TYPE y, TYPE z);
 ns(Mat4) ns(Mat4_create_perspective)(TYPE fov, TYPE ratio, TYPE near, TYPE far);
@@ -587,12 +588,30 @@ ns(Mat4) ns(Mat4_create_rotationZ)(float angle){
     };
 	return ns(Mat4_create_fromArray)(data);
 }
+ns(Mat4) ns(Mat4_create_rotationXYZ)(float x_angle, float y_angle, float z_angle){
+	TYPE x_cos = cosf(GLAL_ANGLE(x_angle));
+	TYPE x_sin = sinf(GLAL_ANGLE(x_angle));
+
+	TYPE y_cos = cosf(GLAL_ANGLE(y_angle));
+	TYPE y_sin = sinf(GLAL_ANGLE(y_angle));
+
+	TYPE z_cos = cosf(GLAL_ANGLE(z_angle));
+	TYPE z_sin = sinf(GLAL_ANGLE(z_angle));
+
+	TYPE data[] = {
+        x_cos * y_cos, x_cos * y_sin * z_sin - x_sin*z_cos, x_cos * y_sin * z_cos + x_sin*z_sin, 0.0,
+        x_sin * y_cos, x_sin * y_sin * z_sin + x_cos*z_cos, x_sin * y_sin * z_cos - x_cos*z_sin, 0.0,
+        - y_sin,   y_cos * z_sin, y_cos * z_cos, 0.0,
+        0.0, 0.0, 0.0, 1.0
+    };
+	return ns(Mat4_create_fromArray)(data);
+}
 ns(Mat4) ns(Mat4_create_translation)(TYPE x, TYPE y, TYPE z){
 	TYPE data[] = {
-        1.0, 0.0, 0.0,   x,
-        0.0, 1.0, 0.0,   y,
-        0.0, 0.0, 1.0,   z,
-        0.0, 0.0, 0.0, 1.0
+        1.0, 0.0, 0.0,   0,
+        0.0, 1.0, 0.0,   0,
+        0.0, 0.0, 1.0,   0,
+          x,   y,   z, 1.0
     };
 	return ns(Mat4_create_fromArray)(data);
 }
@@ -606,7 +625,7 @@ ns(Mat4) ns(Mat4_create_scale)(TYPE x, TYPE y, TYPE z){
 	return ns(Mat4_create_fromArray)(data);
 }
 ns(Mat4) ns(Mat4_create_perspective)(TYPE fov, TYPE ratio, TYPE near, TYPE far){
-	TYPE t = near * tan(GLAL_ANGLE((fov / 2.0)));
+	TYPE t = near * tan(GLAL_ANGLE((fov))/2.0);
     TYPE r = t * ratio;
     TYPE data[] = {
         near/r, 0.0,    0.0,                      0.0,
