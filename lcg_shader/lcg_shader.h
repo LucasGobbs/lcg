@@ -1,6 +1,10 @@
 /*
 Usage
     #define LCG_SHADER_IMPLEMENTATION
+    #include "... / lcg_shader.h"
+    
+    lcg_shader_create
+    lcg_shader_compile
 */
 #ifndef LCG_SHADER_H
 #define LCG_SHADER_H
