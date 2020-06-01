@@ -419,6 +419,7 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 		return a;\
 	}\
 	ns(mat_type) rt;\
+	int i;\
 	FOREACH(colums, i){\
 		MGET(rt, i, 0) = MGET(a, i, 0) / length;\
 	}\
@@ -426,11 +427,12 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 }\
 
 #define Vec_norm_def(mat_type) void GLAL_NS_CONCAT(mat_type, _norm)(ns(mat_type) *a)
-#define Vec_norm_impl(mat_type, rows, colums) Vec_create_norm_def(mat_type){\
+#define Vec_norm_impl(mat_type, rows, colums) Vec_norm_def(mat_type){\
 	TYPE length = GLAL_NS_CONCAT(mat_type, _sqLength)((*a));\
 	if(length - GLAL_EPSILON <= 0.0){\
-		return a;\
+		return;\
 	}\
+	int i;\
 	FOREACH(colums, i){\
 		MGET((*a), i, 0) /= length;\
 	}\
@@ -442,6 +444,20 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	TYPE rt = 0;\
 	FOREACH(colums, i){\
 		rt += MGET(a, i, 0) * MGET(b, i, 0);\
+	}\
+	return rt;\
+}\
+
+#define Vec_mult_mat_def(vec_type, mat_type) ns(vec_type) GLAL_NS_CONCAT(vec_type, _mult_mat)(ns(vec_type) vec, ns(mat_type) mat )
+#define Vec_mult_mat_impl(vec_type, mat_type, rows, colums) Vec_mult_mat_def(vec_type, mat_type){\
+	ns(vec_type) rt = {0};\
+	int i, j, k;\
+	FOREACH(rows, i){\
+		FOREACH(1, j){\
+			FOREACH(colums, k){\
+				MGET(rt, i, j) += MGET(mat, i, k) *  MGET(vec, k, j);\
+			}\
+		}\
 	}\
 	return rt;\
 }\
@@ -546,6 +562,7 @@ ns(Mat4) ns(Mat4_create_lookAt)(ns(Vec3) eye, ns(Vec3) center, ns(Vec3) up);
 
 //============== Vec3 only definitions ==================================================== 
 ns(Vec3) ns(Vec3_cross)(ns(Vec3) a, ns(Vec3) b);
+ns(Vec3) ns(Vec3_qrotate)(ns(Vec3) from, ns(Vec3) axis, float angle);
 
 //============== Vectors only definitions ==================================================
 GLAL_EXPAND_DEF_VEC(Vec_sqLength_def)
@@ -553,6 +570,10 @@ GLAL_EXPAND_DEF_VEC(Vec_length_def)
 GLAL_EXPAND_DEF_VEC(Vec_create_norm_def)
 GLAL_EXPAND_DEF_VEC(Vec_norm_def)
 GLAL_EXPAND_DEF_VEC(Vec_dot_def)
+
+Vec_mult_mat_def(Vec2, Mat2);
+Vec_mult_mat_def(Vec3, Mat3);
+Vec_mult_mat_def(Vec4, Mat4);
 
 // Conversions =================================================================================================
 
@@ -760,6 +781,40 @@ ns(Vec3) ns(Vec3_create_cross)(ns(Vec3) a, ns(Vec3) b){
     //Vec3_prints(rt, "cross");
     return rt;
 }
+ns(Vec3) ns(Vec3_qrotate)(ns(Vec3) from, ns(Vec3) axis, float angle){
+	ns(Vec3) axis_normal = ns(Vec3_create_norm)(axis);
+	float w = cos( GLAL_ANGLE(angle) / 2.0 );
+	float s = sin( GLAL_ANGLE(angle) / 2.0 );
+	TYPE quaternion_data[] = { VX(axis_normal) * s, 
+							   VY(axis_normal) * s, 
+							   VZ(axis_normal) * s, 
+							   w };
+	ns(Vec4) q = ns(Vec4_create_fromArray)(quaternion_data);
+	TYPE qx = VX(q);
+	TYPE qy  = VY(q);
+	TYPE qz = VZ(q);
+	TYPE qw = VW(q);
+
+	TYPE rotation_data[] = {
+		1 - 2 * qy*qy - 2 * qz*qz,     2 * qx*qy - 2 * qw*qz,     2 * qx*qz + 2 * qw*qy,     0.0,
+		    2 * qx*qy + 2 * qw*qz, 1 - 2 * qx*qx - 2 * qz*qz,     2 * qy*qz - 2 * qw*qx,     0.0,
+		    2 * qx*qz + 2 * qw*qy,	   2 * qy*qz + 2 * qw*qx, 1 - 2 * qx*qx - 2 * qy*qy,     0.0,
+				              0.0,                       0.0,                       0.0,     1.0
+	};
+	ns(Mat4) rotation_quat = ns(Mat4_create_fromArray)(rotation_data);
+	ns(Vec4) result = ns(Vec4_mult_mat)(ns(Vec3_toVec4)(from), rotation_quat);
+	return ns(Vec4_toVec3)(result);
+}
+
+GLAL_EXPAND_IMPL_VEC(Vec_sqLength_impl)
+GLAL_EXPAND_IMPL_VEC(Vec_length_impl)
+GLAL_EXPAND_IMPL_VEC(Vec_create_norm_impl)
+GLAL_EXPAND_IMPL_VEC(Vec_norm_impl)
+GLAL_EXPAND_IMPL_VEC(Vec_dot_impl)
+
+Vec_mult_mat_impl(Vec2, Mat2, 2, 1);
+Vec_mult_mat_impl(Vec3, Mat3, 3, 1);
+Vec_mult_mat_impl(Vec4, Mat4, 4, 1);
 
 ns(Vec4) ns(Vec3_toVec4)(ns(Vec3) a){
 	ns(Vec4) rt;
