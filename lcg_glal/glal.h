@@ -90,14 +90,14 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 #define GLAL_EXPAND_IMPL_ALL(def) GLAL_EXPAND_IMPL_MAT(def) GLAL_EXPAND_IMPL_VEC(def)
 
 // Create Simple matrix
-#define Mat_create_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create)()
-#define Mat_create_impl(mat_type, rows, colums) Mat_create_def(mat_type, rows, colums){\
+#define Mat_create_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create)()
+#define Mat_create_impl(mat_type, rows, colums) Mat_create_def(mat_type){\
 	ns(mat_type) a = {0}; return a; \
 }\
 
 // Print matrix
-#define Mat_print_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _print)(ns(mat_type) mat)
-#define Mat_print_impl(mat_type, rows, colums) Mat_print_def(mat_type, rows, colums){\
+#define Mat_print_def(mat_type) void GLAL_NS_CONCAT(mat_type, _print)(ns(mat_type) mat)
+#define Mat_print_impl(mat_type, rows, colums) Mat_print_def(mat_type){\
 	int i, j;\
 	printf(""#mat_type "\n");\
 	FOREACH(rows, i){\
@@ -114,8 +114,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	printf("\n");\
 }\
 // Print String befor printinf matrix
-#define Mat_prints_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _prints)(ns(mat_type) mat, char* txt)
-#define Mat_prints_impl(mat_type, rows, colums) Mat_prints_def(mat_type, rows, colums){\
+#define Mat_prints_def(mat_type) void GLAL_NS_CONCAT(mat_type, _prints)(ns(mat_type) mat, char* txt)
+#define Mat_prints_impl(mat_type, rows, colums) Mat_prints_def(mat_type){\
 	int i, j;\
 	printf("%s\n",txt);\
 	FOREACH(rows, i){\
@@ -128,8 +128,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	printf("\n");\
 }\
 
-#define Mat_create_identity_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_identity)()
-#define Mat_create_identity_impl(mat_type, rows, colums) Mat_create_identity_def(mat_type, rows, colums){\
+#define Mat_create_identity_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_identity)()
+#define Mat_create_identity_impl(mat_type, rows, colums) Mat_create_identity_def(mat_type){\
 	int i;\
 	ns(mat_type) mat = {0};\
 	FOREACH(rows, i){\
@@ -138,8 +138,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return mat;\
 }\
 
-#define Mat_create_copy_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_copy)(ns(mat_type) mat)
-#define Mat_create_copy_impl(mat_type, rows, colums) Mat_create_copy_def(mat_type, rows, colums){\
+#define Mat_create_copy_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_copy)(ns(mat_type) mat)
+#define Mat_create_copy_impl(mat_type, rows, colums) Mat_create_copy_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	FOREACH(rows, i){\
@@ -150,8 +150,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_create_fill_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fill)(TYPE value)
-#define Mat_create_fill_impl(mat_type, rows, colums) Mat_create_fill_def(mat_type, rows, colums){\
+#define Mat_create_fill_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fill)(TYPE value)
+#define Mat_create_fill_impl(mat_type, rows, colums) Mat_create_fill_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	FOREACH(rows, i){\
@@ -162,8 +162,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_create_fill_op_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fill_op)(TYPE (*operation)(size_t i, size_t j, size_t x))
-#define Mat_create_fill_op_impl(mat_type, rows, colums) Mat_create_fill_op_def(mat_type, rows, colums){\
+#define Mat_create_fill_op_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fill_op)(TYPE (*operation)(size_t i, size_t j, size_t x))
+#define Mat_create_fill_op_impl(mat_type, rows, colums) Mat_create_fill_op_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j, x = 0;\
 	FOREACH(rows, i){\
@@ -175,8 +175,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_create_fromArray_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fromArray)(TYPE* data)
-#define Mat_create_fromArray_impl(mat_type, rows, colums) Mat_create_fromArray_def(mat_type, rows, colums){\
+#define Mat_create_fromArray_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fromArray)(TYPE* data)
+#define Mat_create_fromArray_impl(mat_type, rows, colums) Mat_create_fromArray_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j, x = 0;\
 	FOREACH(rows, i){\
@@ -188,8 +188,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_create_fromArg_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fromArg)(TYPE first, ...)
-#define Mat_create_fromArg_impl(mat_type, rows, colums) Mat_create_fromArg_def(mat_type, rows, colums){\
+#define Mat_create_fromArg_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_fromArg)(TYPE first, ...)
+#define Mat_create_fromArg_impl(mat_type, rows, colums) Mat_create_fromArg_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	va_list list;\
@@ -207,8 +207,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 }\
 
 // TODO check for more cache friendly solutions
-#define Mat_create_transpose_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_transpose)(ns(mat_type) mat)
-#define Mat_create_transpose_impl(mat_type, rows, colums) Mat_create_transpose_def(mat_type, rows, colums){\
+#define Mat_create_transpose_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_transpose)(ns(mat_type) mat)
+#define Mat_create_transpose_impl(mat_type, rows, colums) Mat_create_transpose_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	FOREACH(rows, i){\
@@ -220,8 +220,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 }\
 
 //
-#define Mat_naive_equals_def(mat_type, rows, colums) int GLAL_NS_CONCAT(mat_type, _naive_equals)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_naive_equals_impl(mat_type, rows, colums) Mat_naive_equals_def(mat_type, rows, colums){\
+#define Mat_naive_equals_def(mat_type) int GLAL_NS_CONCAT(mat_type, _naive_equals)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_naive_equals_impl(mat_type, rows, colums) Mat_naive_equals_def(mat_type){\
 	int i, j;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
@@ -233,8 +233,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return 1;\
 }\
 
-#define Mat_equals_def(mat_type, rows, colums) int GLAL_NS_CONCAT(mat_type, _equals)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_equals_impl(mat_type, rows, colums) Mat_equals_def(mat_type, rows, colums){\
+#define Mat_equals_def(mat_type) int GLAL_NS_CONCAT(mat_type, _equals)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_equals_impl(mat_type, rows, colums) Mat_equals_def(mat_type){\
 	int i, j;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
@@ -249,8 +249,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 }\
 
 // OPERATIONS
-#define Mat_create_op_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_op)(ns(mat_type) a, ns(mat_type) b, TYPE (*operation)(TYPE a, TYPE b))
-#define Mat_create_op_impl(mat_type, rows, colums) Mat_create_op_def(mat_type, rows, colums){\
+#define Mat_create_op_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_op)(ns(mat_type) a, ns(mat_type) b, TYPE (*operation)(TYPE a, TYPE b))
+#define Mat_create_op_impl(mat_type, rows, colums) Mat_create_op_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	FOREACH(rows, i){\
@@ -263,8 +263,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_create_add_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_add)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_create_add_impl(mat_type, rows, colums) Mat_create_add_def(mat_type, rows, colums){\
+#define Mat_create_add_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_add)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_create_add_impl(mat_type, rows, colums) Mat_create_add_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	FOREACH(rows, i){\
@@ -275,8 +275,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_create_sub_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_sub)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_create_sub_impl(mat_type, rows, colums) Mat_create_sub_def(mat_type, rows, colums){\
+#define Mat_create_sub_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_sub)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_create_sub_impl(mat_type, rows, colums) Mat_create_sub_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	FOREACH(rows, i){\
@@ -287,8 +287,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_create_scalar_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_scalar)(ns(mat_type) a, TYPE value)
-#define Mat_create_scalar_impl(mat_type, rows, colums) Mat_create_scalar_def(mat_type, rows, colums){\
+#define Mat_create_scalar_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_scalar)(ns(mat_type) a, TYPE value)
+#define Mat_create_scalar_impl(mat_type, rows, colums) Mat_create_scalar_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	FOREACH(rows, i){\
@@ -299,8 +299,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_create_schur_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_schur)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_create_schur_impl(mat_type, rows, colums) Mat_create_schur_def(mat_type, rows, colums){\
+#define Mat_create_schur_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_schur)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_create_schur_impl(mat_type, rows, colums) Mat_create_schur_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j;\
 	FOREACH(rows, i){\
@@ -311,8 +311,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	return rt;\
 }\
 
-#define Mat_naive_mult_Mat_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _naive_mult_mat)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_naive_mult_Mat_impl(mat_type, rows, colums) Mat_naive_mult_Mat_def(mat_type, rows, colums){\
+#define Mat_naive_mult_Mat_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _naive_mult_mat)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_naive_mult_Mat_impl(mat_type, rows, colums) Mat_naive_mult_Mat_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	int i, j, k;\
 	FOREACH(rows, i){\
@@ -326,19 +326,19 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 }\
 
 // TODO create strassen multiplication
-#define Mat_strassen_mult_Mat_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _strassen_mult_mat)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_strassen_mult_Mat_impl(mat_type, rows, colums) Mat_strassen_mult_Mat_def(mat_type, rows, colums){\
+#define Mat_strassen_mult_Mat_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _strassen_mult_mat)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_strassen_mult_Mat_impl(mat_type, rows, colums) Mat_strassen_mult_Mat_def(mat_type){\
 	ns(mat_type) rt = {0};\
 	return rt;\
 }\
 
-#define Mat_mult_Mat_def(mat_type, rows, colums) ns(mat_type) GLAL_NS_CONCAT(mat_type, _mult_mat)(ns(mat_type) a, ns(mat_type) b)
-#define Mat_mult_Mat_impl(mat_type, rows, colums) Mat_mult_Mat_def(mat_type, rows, colums){\
+#define Mat_mult_Mat_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _mult_mat)(ns(mat_type) a, ns(mat_type) b)
+#define Mat_mult_Mat_impl(mat_type, rows, colums) Mat_mult_Mat_def(mat_type){\
 	return GLAL_NS_CONCAT(mat_type, _naive_mult_mat)(a,b);\
 }\
 
-#define Mat_op_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _op)(ns(mat_type) *a, ns(mat_type) b, TYPE (*operation)(TYPE a, TYPE b))
-#define Mat_op_impl(mat_type, rows, colums) Mat_op_def(mat_type, rows, colums){\
+#define Mat_op_def(mat_type) void GLAL_NS_CONCAT(mat_type, _op)(ns(mat_type) *a, ns(mat_type) b, TYPE (*operation)(TYPE a, TYPE b))
+#define Mat_op_impl(mat_type, rows, colums) Mat_op_def(mat_type){\
 	int i, j;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
@@ -349,8 +349,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	}\
 }\
 
-#define Mat_add_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _add)(ns(mat_type) *a, ns(mat_type) b)
-#define Mat_add_impl(mat_type, rows, colums) Mat_add_def(mat_type, rows, colums){\
+#define Mat_add_def(mat_type) void GLAL_NS_CONCAT(mat_type, _add)(ns(mat_type) *a, ns(mat_type) b)
+#define Mat_add_impl(mat_type, rows, colums) Mat_add_def(mat_type){\
 	int i, j;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
@@ -361,8 +361,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	}\
 }\
 
-#define Mat_sub_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _sub)(ns(mat_type) *a, ns(mat_type) b)
-#define Mat_sub_impl(mat_type, rows, colums) Mat_sub_def(mat_type, rows, colums){\
+#define Mat_sub_def(mat_type) void GLAL_NS_CONCAT(mat_type, _sub)(ns(mat_type) *a, ns(mat_type) b)
+#define Mat_sub_impl(mat_type, rows, colums) Mat_sub_def(mat_type){\
 	int i, j;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
@@ -373,8 +373,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	}\
 }\
 
-#define Mat_scalar_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _scalar)(ns(mat_type) *a, TYPE  value)
-#define Mat_scalar_impl(mat_type, rows, colums) Mat_scalar_def(mat_type, rows, colums){\
+#define Mat_scalar_def(mat_type) void GLAL_NS_CONCAT(mat_type, _scalar)(ns(mat_type) *a, TYPE  value)
+#define Mat_scalar_impl(mat_type, rows, colums) Mat_scalar_def(mat_type){\
 	int i, j;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
@@ -384,8 +384,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	}\
 }\
 
-#define Mat_schur_def(mat_type, rows, colums) void GLAL_NS_CONCAT(mat_type, _schur)(ns(mat_type) *a, ns(mat_type) b)
-#define Mat_schur_impl(mat_type, rows, colums) Mat_schur_def(mat_type, rows, colums){\
+#define Mat_schur_def(mat_type) void GLAL_NS_CONCAT(mat_type, _schur)(ns(mat_type) *a, ns(mat_type) b)
+#define Mat_schur_impl(mat_type, rows, colums) Mat_schur_def(mat_type){\
 	int i, j;\
 	FOREACH(rows, i){\
 		FOREACH(colums, j){\
@@ -396,8 +396,55 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	}\
 }\
 
+// Vector
+#define Vec_sqLength_def(mat_type) TYPE GLAL_NS_CONCAT(mat_type, _sqLength)(ns(mat_type) a)
+#define Vec_sqLength_impl(mat_type, rows, colums) Vec_sqLength_def(mat_type){\
+	int i;\
+	TYPE rt = 0;\
+	FOREACH(colums, i){\
+		rt += MGET(a, i, 0) * MGET(a, i, 0);\
+	}\
+	return rt;\
+}\
 
+#define Vec_length_def(mat_type) TYPE GLAL_NS_CONCAT(mat_type, _length)(ns(mat_type) a)
+#define Vec_length_impl(mat_type, rows, colums) Vec_length_def(mat_type){\
+	return sqrt(GLAL_NS_CONCAT(mat_type, _sqLength)(a));\
+}\
 
+#define Vec_create_norm_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_norm)(ns(mat_type) a)
+#define Vec_create_norm_impl(mat_type, rows, colums) Vec_create_norm_def(mat_type){\
+	TYPE length = GLAL_NS_CONCAT(mat_type, _sqLength)(a);\
+	if(length - GLAL_EPSILON <= 0.0){\
+		return a;\
+	}\
+	ns(mat_type) rt;\
+	FOREACH(colums, i){\
+		MGET(rt, i, 0) = MGET(a, i, 0) / length;\
+	}\
+	return rt;\
+}\
+
+#define Vec_norm_def(mat_type) void GLAL_NS_CONCAT(mat_type, _norm)(ns(mat_type) *a)
+#define Vec_norm_impl(mat_type, rows, colums) Vec_create_norm_def(mat_type){\
+	TYPE length = GLAL_NS_CONCAT(mat_type, _sqLength)((*a));\
+	if(length - GLAL_EPSILON <= 0.0){\
+		return a;\
+	}\
+	FOREACH(colums, i){\
+		MGET((*a), i, 0) /= length;\
+	}\
+}\
+
+#define Vec_dot_def(mat_type) TYPE GLAL_NS_CONCAT(mat_type, _dot)(ns(mat_type) a, ns(mat_type) b)
+#define Vec_dot_impl(mat_type, rows, colums) Vec_dot_def(mat_type){\
+	int i;\
+	TYPE rt = 0;\
+	FOREACH(colums, i){\
+		rt += MGET(a, i, 0) * MGET(b, i, 0);\
+	}\
+	return rt;\
+}\
 
 // Template to function def and impl
 /*
@@ -448,6 +495,7 @@ void mat_add(ns(Mat2)* mata, ns(Mat2) matb ){
 
 //Mat_create_def(Mat2, 2, 2);
 
+//========== Vector and Matrix definitions ============================================================
 GLAL_EXPAND_DEF_ALL(Mat_create_def)
 GLAL_EXPAND_DEF_ALL(Mat_print_def)
 GLAL_EXPAND_DEF_ALL(Mat_prints_def)
@@ -473,6 +521,7 @@ GLAL_EXPAND_DEF_ALL(Mat_equals_def)
 GLAL_EXPAND_DEF_MAT(Mat_mult_Mat_def)
 GLAL_EXPAND_DEF_MAT(Mat_naive_mult_Mat_def)
 
+//============== Generic calls =================================================================================
 void ns(Matx_print)(int type, void* vp);
 
 #define Mat_print(mat) {\
@@ -485,6 +534,7 @@ void ns(Matx_print)(int type, void* vp);
 	}\
 	}\
 
+//========= Mat4 only definitions ==========================================================================
 ns(Mat4) ns(Mat4_create_rotationX)(float angle);
 ns(Mat4) ns(Mat4_create_rotationY)(float angle);
 ns(Mat4) ns(Mat4_create_rotationZ)(float angle);
@@ -493,21 +543,22 @@ ns(Mat4) ns(Mat4_create_translation)(TYPE x, TYPE y, TYPE z);
 ns(Mat4) ns(Mat4_create_scale)(TYPE x, TYPE y, TYPE z);
 ns(Mat4) ns(Mat4_create_perspective)(TYPE fov, TYPE ratio, TYPE near, TYPE far);
 ns(Mat4) ns(Mat4_create_lookAt)(ns(Vec3) eye, ns(Vec3) center, ns(Vec3) up);
+
+//============== Vec3 only definitions ==================================================== 
 ns(Vec3) ns(Vec3_cross)(ns(Vec3) a, ns(Vec3) b);
 
-// TODO make generic 
-void ns(Vec3_normalize)(ns(Vec3) *a);
-TYPE ns(Vec3_dot)(ns(Vec3) a, ns(Vec3) b);
-/*
-ns(Mat4) ns(Mat4_create_lookAt)(float angle){
+//============== Vectors only definitions ==================================================
+GLAL_EXPAND_DEF_VEC(Vec_sqLength_def)
+GLAL_EXPAND_DEF_VEC(Vec_length_def)
+GLAL_EXPAND_DEF_VEC(Vec_create_norm_def)
+GLAL_EXPAND_DEF_VEC(Vec_norm_def)
+GLAL_EXPAND_DEF_VEC(Vec_dot_def)
 
-	return ns(Mat4_create_fromArray)(data);
-}
-ns(Mat4) ns(Mat4_create_ortho)(float angle){
+// Conversions =================================================================================================
 
-	return ns(Mat4_create_fromArray)(data);
-}
-*/
+ns(Vec4) ns(Vec3_toVec4)(ns(Vec3) a);
+ns(Vec3) ns(Vec4_toVec3)(ns(Vec4) a);
+
 
 #ifdef GLAL_IMPLEMENTATION
 //=================================================================================================================
@@ -647,21 +698,12 @@ ns(Mat4) ns(Mat4_create_perspective)(TYPE fov, TYPE ratio, TYPE near, TYPE far){
 */
 	
 }
-ns(Vec3) ns(Vec3_create_cross)(ns(Vec3) a, ns(Vec3) b){
-    ns(Vec3) rt;
-    VX(rt) = VY(a) * VZ(b) - VZ(a) * VY(b); 
-    VY(rt) = VZ(a) * VX(b) - VX(a) * VZ(b); 
-    VZ(rt) = VX(a) * VY(b) - VY(a) * VX(b); 
-    //Vec3_prints(rt, "cross");
-    return rt;
-}
-
 ns(Mat4) ns(Mat4_create_lookAt)(ns(Vec3) eye, ns(Vec3) center, ns(Vec3) up){
     ns(Vec3) front = ns(Vec3_create_sub)(center, eye);
-    ns(Vec3_normalize)(&front);
+    ns(Vec3_norm)(&front);
     
     ns(Vec3) right = ns(Vec3_create_cross)(front, up);
-    ns(Vec3_normalize)(&right);
+    ns(Vec3_norm)(&right);
 
     ns(Vec3) new_up = ns(Vec3_create_cross)(right, front);
 
@@ -709,24 +751,32 @@ ns(Mat4) ns(Mat4_create_lookAt)(ns(Vec3) eye, ns(Vec3) center, ns(Vec3) up){
 
 	mat4x4_translate_in_place(m, -eye[0], -eye[1], -eye[2]);
     */
+}
+ns(Vec3) ns(Vec3_create_cross)(ns(Vec3) a, ns(Vec3) b){
+    ns(Vec3) rt;
+    VX(rt) = VY(a) * VZ(b) - VZ(a) * VY(b); 
+    VY(rt) = VZ(a) * VX(b) - VX(a) * VZ(b); 
+    VZ(rt) = VX(a) * VY(b) - VY(a) * VX(b); 
+    //Vec3_prints(rt, "cross");
+    return rt;
+}
 
+ns(Vec4) ns(Vec3_toVec4)(ns(Vec3) a){
+	ns(Vec4) rt;
+	VX(rt) = VX(a);
+	VY(rt) = VY(a);
+	VZ(rt) = VZ(a);
+	VW(rt) = 0.0;
+	return rt;
 }
-void ns(Vec3_normalize)(ns(Vec3) *a){
-    TYPE length = sqrtf((VX((*a)) * VX((*a))) + 
-                        (VY((*a)) * VY((*a))) +
-                        (VZ((*a)) * VZ((*a))));
-    if(length - GLAL_EPSILON<=0.0){
-        return;
-    }
-    VX((*a)) /= length;
-    VY((*a)) /= length;
-    VZ((*a)) /= length;
+ns(Vec3) ns(Vec4_toVec3)(ns(Vec4) a){
+	ns(Vec3) rt;
+	VX(rt) = VX(a);
+	VY(rt) = VY(a);
+	VZ(rt) = VZ(a);
+	return rt;
 }
-TYPE ns(Vec3_dot)(ns(Vec3) a, ns(Vec3) b){
-    return ((VX(a)*VX(b))+
-            (VY(a)*VY(b))+
-            (VZ(a)*VZ(b)));
-}
+
 #endif //GLAL_IMPLEMENTATION
 
 #endif //GLAL_H
