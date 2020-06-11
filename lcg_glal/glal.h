@@ -80,10 +80,10 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 	blablabla\
 }\
 */
-#define GLAL_EXPAND_DEF_MAT(def) def(Mat2, 2, 2); def(Mat3, 3, 3); def(Mat4, 4, 4);
+#define GLAL_EXPAND_DEF_MAT(def) def(Mat2); def(Mat3); def(Mat4);
 #define GLAL_EXPAND_IMPL_MAT(impl) impl(Mat2, 2, 2) impl(Mat3, 3, 3) impl(Mat4, 4, 4)
 
-#define GLAL_EXPAND_DEF_VEC(def) def(Vec2, 2, 1); def(Vec3, 3, 1); def(Vec4, 4, 1);
+#define GLAL_EXPAND_DEF_VEC(def) def(Vec2); def(Vec3); def(Vec4);
 #define GLAL_EXPAND_IMPL_VEC(impl) impl(Vec2, 2, 1) impl(Vec3, 3, 1) impl(Vec4, 4, 1)
 
 #define GLAL_EXPAND_DEF_ALL(def) GLAL_EXPAND_DEF_MAT(def) GLAL_EXPAND_DEF_VEC(def)
@@ -401,7 +401,7 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 #define Vec_sqLength_impl(mat_type, rows, colums) Vec_sqLength_def(mat_type){\
 	int i;\
 	TYPE rt = 0;\
-	FOREACH(colums, i){\
+	FOREACH(rows, i){\
 		rt += MGET(a, i, 0) * MGET(a, i, 0);\
 	}\
 	return rt;\
@@ -414,13 +414,13 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 
 #define Vec_create_norm_def(mat_type) ns(mat_type) GLAL_NS_CONCAT(mat_type, _create_norm)(ns(mat_type) a)
 #define Vec_create_norm_impl(mat_type, rows, colums) Vec_create_norm_def(mat_type){\
-	TYPE length = GLAL_NS_CONCAT(mat_type, _sqLength)(a);\
+	TYPE length = GLAL_NS_CONCAT(mat_type, _length)(a);\
 	if(length - GLAL_EPSILON <= 0.0){\
 		return a;\
 	}\
 	ns(mat_type) rt;\
 	int i;\
-	FOREACH(colums, i){\
+	FOREACH(rows, i){\
 		MGET(rt, i, 0) = MGET(a, i, 0) / length;\
 	}\
 	return rt;\
@@ -433,8 +433,8 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 		return;\
 	}\
 	int i;\
-	FOREACH(colums, i){\
-		MGET((*a), i, 0) /= length;\
+	FOREACH(rows, i){\
+		MGET((*a), i, 0) = MGET((*a), i, 0) / length;\
 	}\
 }\
 
@@ -442,7 +442,7 @@ GLAL_MATRIX_TYPE(Vec4,4,1);
 #define Vec_dot_impl(mat_type, rows, colums) Vec_dot_def(mat_type){\
 	int i;\
 	TYPE rt = 0;\
-	FOREACH(colums, i){\
+	FOREACH(rows, i){\
 		rt += MGET(a, i, 0) * MGET(b, i, 0);\
 	}\
 	return rt;\
@@ -561,7 +561,7 @@ ns(Mat4) ns(Mat4_create_perspective)(TYPE fov, TYPE ratio, TYPE near, TYPE far);
 ns(Mat4) ns(Mat4_create_lookAt)(ns(Vec3) eye, ns(Vec3) center, ns(Vec3) up);
 
 //============== Vec3 only definitions ==================================================== 
-ns(Vec3) ns(Vec3_cross)(ns(Vec3) a, ns(Vec3) b);
+ns(Vec3) ns(Vec3_create_cross)(ns(Vec3) a, ns(Vec3) b);
 ns(Vec3) ns(Vec3_qrotate)(ns(Vec3) from, ns(Vec3) axis, float angle);
 
 //============== Vectors only definitions ==================================================
