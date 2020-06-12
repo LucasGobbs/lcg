@@ -812,9 +812,9 @@ GLAL_EXPAND_IMPL_VEC(Vec_create_norm_impl)
 GLAL_EXPAND_IMPL_VEC(Vec_norm_impl)
 GLAL_EXPAND_IMPL_VEC(Vec_dot_impl)
 
-Vec_mult_mat_impl(Vec2, Mat2, 2, 1);
-Vec_mult_mat_impl(Vec3, Mat3, 3, 1);
-Vec_mult_mat_impl(Vec4, Mat4, 4, 1);
+Vec_mult_mat_impl(Vec2, Mat2, 2, 1)
+Vec_mult_mat_impl(Vec3, Mat3, 3, 1)
+Vec_mult_mat_impl(Vec4, Mat4, 4, 1)
 
 ns(Vec4) ns(Vec3_toVec4)(ns(Vec3) a){
 	ns(Vec4) rt;
