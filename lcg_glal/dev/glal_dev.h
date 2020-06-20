@@ -34,8 +34,12 @@ gcc -Wno-missing-braces -Wall -pedantic -std=c99 -o exe glal_example.c -lm
 #define GLAL_NS_CONCAT3(a, b, c) GLAL_CONCAT4(GLAL_PREFIX,a,b,c)
 
 #define GLAL_ABS(a) ((a)>0.0?(a):-(a))
+
+// Constants
 #define GLAL_PI 3.1415926535
-#define GLAL_EPSILON 0.00000001 // i think its smol but you can prove me wrong
+#define GLAL_EPSILON 1.19209290e-7f
+#define GLAL_E 2.7182818284590452353602874713526625f
+#define GLAL_TAU 6.28318530717958647692528676655900576f
 // =============================================================================
 // Type
 // TODO change this workarounf of (GCC bug # 53119, missing braces around inicializer)  to something better
