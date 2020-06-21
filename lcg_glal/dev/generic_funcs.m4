@@ -1,17 +1,17 @@
 changequote(`'', `'')
 changecom("//")
 dnl Iterators   --------------------------------------------------------------
-define(foreach, 'for($1 = 0 ; $1  < $2 ; $1++ )')dnl
-define(mat_foreach, 'foreach(i,$1)
-        foreach(j,$2)')dnl
+define(FOREACH, 'for($1 = 0 ; $1  < $2 ; $1++ )')dnl
+define(MAT_FOREACH, 'FOREACH(i,$1)
+        FOREACH(j,$2)')dnl
 
 
 dnl Acessing object     --------------------------------------------------------------
-define(member, 'self.data[i][j]')dnl
-define(member_a, 'a.data[i][j]')dnl
-define(member_b, 'b.data[i][j]')dnl
-define(member_c, 'c.data[i][j]')dnl
-define(other , 'other.data[i][j]')dnl
+define(MEMBER, 'self.data[i][j]')dnl
+define(MEMBER_A, 'a.data[i][j]')dnl
+define(MEMBER_B, 'b.data[i][j]')dnl
+define(MEMBER_C, 'c.data[i][j]')dnl
+define(OTHER , 'other.data[i][j]')dnl
 
 dnl ===== Expansions of macros ====================================================================
 dnl To expand single definition ------------
@@ -75,7 +75,7 @@ define(Mat_create_fill_fimpl,
 'Mat_create_fill_fdef($1, create_fill){
     int i, j;
     ns($1) self;
-    mat_foreach($3, $4){
+    MAT_FOREACH($3, $4){
             member = value;
         }
     return self;
@@ -87,8 +87,8 @@ define(Mat_print_fdef,'void ns($1_$2)(ns($1) self)')dnl
 define(Mat_print_fimpl,'Mat_print_fdef($1, print){
     int i, j;
     ns(mat_type) self;
-    foreach(i,$3){
-        foreach(j,$4){
+    FOREACH(i,$3){
+        FOREACH(j,$4){
             printf("%f ",member);
         }
         printf("\n");
